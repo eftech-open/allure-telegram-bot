@@ -7,11 +7,12 @@ from allure_adapter import AllureAdapter
 from handlers.utils import clean_processed_launches, clean_tmp
 from handlers.commands import start, help_info, remove_notify, perform_notify, notify_critical, notify_all
 from reporters.chart_reporter import ChartReporter
+
 from logging import config
-from telegram import Update
-from telegram.ext import Updater, CommandHandler
 from pytz import timezone
 from persistence.mongo_persistence import MongoPersistence
+from telegram import Update
+from telegram.ext import Updater, CommandHandler
 
 load_dotenv()
 

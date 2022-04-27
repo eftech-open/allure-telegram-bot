@@ -7,9 +7,12 @@ from bot import reporter
 from handlers.utils import collect_launch_statistic, unsubscribe, subscribe_all, set_chat_info, subscribe_critical
 
 
+report_critical = os.environ.get('REPORT_CRITICAL_PERCENT')
+
+
 def start(update: Update, context: CallbackContext) -> None:
     from_user = update.message.from_user.name
-    message = f"Hi, {from_user}!\n" \
+    message = f"Hey, {from_user}!\n" \
               f"Enter /help for commands list"
     update.message.reply_text(message)
 
@@ -31,7 +34,7 @@ def remove_notify(update: Update, context: CallbackContext) -> None:
     elif not subscription:
         text = 'You have not any active notifications'
     else:
-        text = 'Command error'
+        text = 'Command execution error'
     update.message.reply_text(text)
 
 
@@ -42,16 +45,15 @@ def notify_all(update: Update, context: CallbackContext) -> None:
     if not subscription:
         subscribe_all(context, chat_id)
         set_chat_info(update, context, chat_id)
-        text = 'Вы подписаны на уведомления по всем запускам!'
+        text = 'You have already subscribed for all notifications!'
     elif subscription == 'critical':
         subscribe_all(context, chat_id)
         set_chat_info(update, context, chat_id)
-        text = f'Вы изменили подписку с частичной о запусках с кол-вом упавших тестов > ' \
-               f'{os.environ.get("REPORT_CRITICAL_PERCENT")}% на полную!'
+        text = f'Вы изменили подписку с частичной о запусках с кол-вом упавших тестов > {report_critical}% на полную!'
     elif subscription == 'all':
         text = 'Вы уже подписаны на уведомления по всем запускам!'
     else:
-        text = 'Ошибка обработки команды'
+        text = 'Command execution error'
     update.message.reply_text(text)
 
 
@@ -62,18 +64,15 @@ def notify_critical(update: Update, context: CallbackContext) -> None:
     if not subscription:
         subscribe_critical(context, chat_id)
         set_chat_info(update, context, chat_id)
-        text = f'Вы подписаны на уведомления о запусках с кол-вом упавших тестов > ' \
-               f'{os.environ.get("REPORT_CRITICAL_PERCENT")}%!'
+        text = f'You have subscribed to \'critical\' with > {report_critical}%'
     elif subscription == 'all':
         subscribe_critical(context, chat_id)
         set_chat_info(update, context, chat_id)
-        text = f'Вы изменили подписку с полной на уведомления о запусках с кол-вом упавших тестов > ' \
-               f'{os.environ.get("REPORT_CRITICAL_PERCENT")}%!'
+        text = f'Subscription changed to \'critical\' with > {report_critical}%'
     elif subscription == 'critical':
-        text = f'Вы уже подписаны на уведомления о запусках с кол-вом упавших тестов > ' \
-               f'{os.environ.get("REPORT_CRITICAL_PERCENT")}%!'
+        text = f'You have already subscribed to \'critical\' with > {report_critical}%'
     else:
-        text = 'Ошибка обработки команды'
+        text = 'Command execution error'
     update.message.reply_text(text)
 
 
