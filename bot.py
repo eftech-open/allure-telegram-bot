@@ -2,30 +2,18 @@ import os
 from apscheduler.triggers.cron import CronTrigger
 from dotenv import load_dotenv
 from datetime import time
-
-from allure_adapter import AllureAdapter
 from handlers.utils import clean_processed_launches, clean_tmp
 from handlers.commands import start, help_info, remove_notify, perform_notify, notify_critical, notify_all
-from reporters.chart_reporter import ChartReporter
 
 from logging import config
 from pytz import timezone
-from persistence.mongo_persistence import MongoPersistence
+from persistence.mongo_persistence import mongo_persistence
 from telegram import Update
 from telegram.ext import Updater, CommandHandler
 
 load_dotenv()
 
 config.fileConfig(fname='logging.conf', disable_existing_loggers=True)
-
-allure = AllureAdapter()
-reporter = ChartReporter()
-
-mongo_persistence = MongoPersistence(
-    host=os.environ.get('MONGO_HOST'),
-    port=os.environ.get('MONGO_PORT'),
-    database=os.environ.get('MONGO_DATABASE')
-)
 
 
 def main() -> None:

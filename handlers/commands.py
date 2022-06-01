@@ -3,9 +3,8 @@ import logging
 from telegram import Update, parsemode
 from telegram.error import Unauthorized
 from telegram.ext import CallbackContext
-from bot import reporter
 from handlers.utils import collect_launch_statistic, unsubscribe, subscribe_all, set_chat_info, subscribe_critical
-
+from reporters.chart_reporter import reporter
 
 report_critical = os.environ.get('REPORT_CRITICAL_PERCENT')
 

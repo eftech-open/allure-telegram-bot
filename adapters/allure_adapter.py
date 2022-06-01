@@ -3,8 +3,12 @@ import json
 import base64
 import logging
 from time import sleep
-from dates import form_timedelta, change_date_pattern, change_to_timestamp
+
+from dotenv import load_dotenv
+from tools.dates import form_timedelta, change_date_pattern, change_to_timestamp
 from tools.http_client import http_client
+
+load_dotenv()
 
 
 class AllureAdapter:
@@ -211,3 +215,6 @@ class AllureAdapter:
                     retries -= 1
                     continue
         return statuses
+
+
+allure = AllureAdapter()

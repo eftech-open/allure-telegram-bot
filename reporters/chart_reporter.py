@@ -2,7 +2,7 @@ import os
 import uuid
 import emoji
 import matplotlib.pyplot as plot
-from dates import form_nowdate, form_timedelta
+from tools.dates import form_nowdate, form_timedelta
 
 
 class ChartReporter:
@@ -150,3 +150,6 @@ class ChartReporter:
         )
         file_path = self._create_chart(passed, broken, failed)
         return {'file': file_path, 'message': info_message}
+
+
+reporter = ChartReporter()

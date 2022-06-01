@@ -1,9 +1,13 @@
 import os
 import logging
+
 from telegram import Update
 from telegram.ext import CallbackContext
 from typing import Optional
-from bot import mongo_persistence, allure
+
+from adapters.allure_adapter import allure
+from persistence.mongo_persistence import mongo_persistence
+
 
 """
 Subscriptions
