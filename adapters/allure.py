@@ -13,7 +13,7 @@ load_dotenv()
 
 class AllureAdapter:
     """
-    Allure TestOps adapter
+    Allure TestOps API adapter
     """
 
     def __init__(self):

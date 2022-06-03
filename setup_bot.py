@@ -1,6 +1,5 @@
 from os import path
 from click import command, echo, option, STRING, INT
-from tools.dates import form_timezone
 
 
 @command()
@@ -46,7 +45,7 @@ def generate_env_file(allure_project, allure_url, allure_user_token, bot_token, 
 
     def rest_parameters():
         return '# Rest settings\n' \
-               f'TIMEZONE="{form_timezone()}"\n' \
+               f'TIMEZONE="UTC"\n' \
                f'CLEAR_DB_LAUNCHES="True"\n' \
                f'CLEAR_DATE_TMP="59 23 */2 * *"\n'
 
