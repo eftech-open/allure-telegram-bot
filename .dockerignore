@@ -1,0 +1,5 @@
+.env
+/.idea
+/tmp/bot.log
+/tmp/*.png
+.DS_Store
