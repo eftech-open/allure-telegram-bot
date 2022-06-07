@@ -1,4 +1,4 @@
-FROM python:3.9.12-buster
+FROM python:3.9.13-slim
 
 # Update recommends
 RUN apt update && apt install --no-install-recommends -y curl build-essential
@@ -18,7 +18,7 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
 RUN poetry config virtualenvs.create false && poetry install
 
 # Bot setup
-COPY . ./notification_bot
-WORKDIR /notification_bot
+COPY . ./allure-telegram-bot
+WORKDIR /allure-telegram-bot
 
 ENTRYPOINT [ "python3", "bot.py"]

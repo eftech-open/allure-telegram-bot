@@ -48,9 +48,9 @@ def notify_all(update: Update, context: CallbackContext) -> None:
     elif subscription == 'critical':
         subscribe_all(context, chat_id)
         set_chat_info(update, context, chat_id)
-        text = f'Вы изменили подписку с частичной о запусках с кол-вом упавших тестов > {report_critical}% на полную!'
+        text = f'You have changed subscriptions from critical > {report_critical}% to all!'
     elif subscription == 'all':
-        text = 'Вы уже подписаны на уведомления по всем запускам!'
+        text = 'You have already subscribed for all notifications!'
     else:
         text = 'Command execution error'
     update.message.reply_text(text)
@@ -99,7 +99,7 @@ def perform_notify(context: CallbackContext) -> None:
                         parse_mode=parsemode.ParseMode.MARKDOWN_V2
                     )
 
-                    logging.debug(f"Сообщение отправлено в '{chat_id}' по подписке 'critical'")
+                    logging.debug(f"Message send to '{chat_id}' with 'critical' subscription")
                 except Unauthorized:
                     unsubscribe(context, chat_id)
         else:
@@ -115,10 +115,10 @@ def perform_notify(context: CallbackContext) -> None:
                         parse_mode=parsemode.ParseMode.MARKDOWN_V2
                     )
 
-                    logging.debug(f"Сообщение отправлено в '{chat_id}' по подписке 'all'")
+                    logging.debug(f"Message send to '{chat_id}' with 'all' subscription")
                 except Unauthorized:
                     unsubscribe(context, chat_id)
         else:
-            logging.debug("Найденные запуски не содержат упавших тестов")
+            logging.debug("All tests in launch are passed")
     else:
         logging.debug("New launches not found")

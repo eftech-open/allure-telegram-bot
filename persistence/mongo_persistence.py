@@ -7,7 +7,7 @@ from telegram.ext import BasePersistence
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
-#
+
 load_dotenv()
 
 
@@ -96,4 +96,3 @@ mongo_persistence = MongoPersistence(
     port=os.environ.get('MONGO_PORT'),
     database=os.environ.get('MONGO_DATABASE')
 )
-
