@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+
+  mongo:
+    image: mongo:5.0
+    container_name: mongo_db
+    restart: always
+    ports:
+      - ${MONGO_PORT}:${MONGO_PORT}
+    volumes:
+      - mongo_db:/data/db
+    networks:
+      - net
+
+  allure-telegram-bot:
+    image: eftechopen/allure-telegram-bot:feat-reporter
+    restart: always
+    environment:
+      ALLURE_PROJECT: ${ALLURE_PROJECT}
+      ALLURE_URL: ${ALLURE_URL}
+      ALLURE_USER_TOKEN: ${ALLURE_USER_TOKEN}
+      BOT_TOKEN: ${BOT_TOKEN}
+      CLEAR_DATE_TMP: ${CLEAR_DATE_TMP}
+      CLEAR_DB_LAUNCHES: ${CLEAR_DB_LAUNCHES}
+      MONGO_DATABASE: ${MONGO_DATABASE}
+      MONGO_HOST: ${MONGO_HOST}
+      MONGO_PORT: ${MONGO_PORT}
+      REPORT_CHART_PATH: ${REPORT_CHART_PATH}
+      REPORT_CRITICAL_PERCENT: ${REPORT_CRITICAL_PERCENT}
+      REPORT_INTERVAL: ${REPORT_INTERVAL}
+      REPORT_TIMEDELTA: ${REPORT_TIMEDELTA}
+      TIMEZONE: ${TIMEZONE}
+    volumes:
+      - notification_bot:/notification_bot/tmp # Поменять путь :) (/usr/local/) /home/${USER}
+    networks:
+      - net
+
+networks:
+  net:
+    driver: bridge
+
+volumes:
+  mongo_db:
+  notification_bot:
