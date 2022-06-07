@@ -6,7 +6,7 @@ from telegram.ext import CallbackContext
 from typing import Optional
 
 from adapters.allure import allure
-from persistence.mongo_persistence import mongo_persistence
+from persistence.mongo import mongo_persistence
 
 
 # Subscriptions

@@ -7,7 +7,7 @@ from handlers.commands import start, help_info, remove_notify, perform_notify, n
 
 from logging import config
 from pytz import timezone
-from persistence.mongo_persistence import mongo_persistence
+from persistence.mongo import mongo_persistence
 from telegram import Update
 from telegram.ext import Updater, CommandHandler
 

@@ -18,7 +18,7 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
 RUN poetry config virtualenvs.create false && poetry install
 
 # Bot setup
-COPY . ./allure-telegram-bot
-WORKDIR /allure-telegram-bot
+COPY . ./allure_telegram_bot
+WORKDIR /allure_telegram_bot
 
 ENTRYPOINT [ "python3", "bot.py"]

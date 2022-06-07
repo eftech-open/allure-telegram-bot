@@ -4,7 +4,7 @@ from telegram import Update, parsemode
 from telegram.error import Unauthorized
 from telegram.ext import CallbackContext
 from handlers.utils import collect_launch_statistic, unsubscribe, subscribe_all, set_chat_info, subscribe_critical
-from reporters.chart_reporter import reporter
+from reporters.chart import reporter
 
 report_critical = os.environ.get('REPORT_CRITICAL_PERCENT')
 
@@ -103,7 +103,7 @@ def perform_notify(context: CallbackContext) -> None:
                 except Unauthorized:
                     unsubscribe(context, chat_id)
         else:
-            logging.debug("Найденные запуски не содержат критическое кол-во упавших тестов")
+            logging.debug("The number of failed tests does not exceed a critical value")
 
         if "Все тесты прошли успешно" not in full_report["message"]:
             for chat_id in all_subs:

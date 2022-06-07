@@ -4,14 +4,14 @@ from click import command, echo, option, STRING, INT
 
 @command()
 @option("--allure_url", prompt="Allure TestOps URL", type=STRING, help='URL like https://<url>')
-@option("--allure_project", prompt="Allure TestOps project ID", type=INT, help='')
-@option("--allure_user_token", prompt="Allure TestOps user token", type=STRING, help='')
-@option("--bot_token", prompt="Bot token", type=STRING, help='Issued by bot-father')
+@option("--allure_project", prompt="Allure TestOps project ID", type=INT, help='Project ID')
+@option("--allure_user_token", prompt="Allure TestOps user token", type=STRING, help='User API-token')
+@option("--bot_token", prompt="Bot token", type=STRING, help='Issued by BotFather')
 @option("--mongo_host", prompt="Mongo host", default='127.0.0.1', type=STRING,
         help='IP or https address, default \'127.0.0.1\'')
 @option("--mongo_port", prompt="Mongo port", default=27017, type=INT, help='Database port, default \'27017\'')
-@option("--mongo_database", prompt="Mongo database", default='allure_bot-bot', type=STRING,
-        help='Database port, default \'allure_bot\'')
+@option("--mongo_database", prompt="Mongo database", default='allure-bot', type=STRING,
+        help='Database port, default \'allure-bot\'')
 def generate_env_file(allure_project, allure_url, allure_user_token, bot_token, mongo_host, mongo_port,
                       mongo_database):
     """
@@ -47,7 +47,7 @@ def generate_env_file(allure_project, allure_url, allure_user_token, bot_token, 
         return '# Rest settings\n' \
                f'TIMEZONE="UTC"\n' \
                f'CLEAR_DB_LAUNCHES="True"\n' \
-               f'CLEAR_DATE_TMP="59 23 */2 * *"\n'
+               f'CLEAR_DATE_TMP="59 23 */5 * *"\n'
 
     allure = allure_parameters(allure_project, allure_url, allure_user_token)
     bot = bot_parameters(bot_token)
@@ -55,7 +55,7 @@ def generate_env_file(allure_project, allure_url, allure_user_token, bot_token, 
     report = report_parameters()
     rest = rest_parameters()
 
-    with open(".env.check", "w") as f:
+    with open(".env", "w") as f:
         f.writelines([allure, bot, mongo, report, rest])
 
     echo(f"Environment file has been generated and stored in '{path.abspath(path.dirname(__file__))}/.env'")

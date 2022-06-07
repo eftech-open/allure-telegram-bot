@@ -11,10 +11,11 @@ services:
     volumes:
       - mongo_db:/data/db
     networks:
-      - net
+      - allure-bot
 
   allure-telegram-bot:
     image: eftechopen/allure-telegram-bot:feat-reporter
+    container_name: telegram-bot
     restart: always
     environment:
       ALLURE_PROJECT: ${ALLURE_PROJECT}
@@ -32,14 +33,14 @@ services:
       REPORT_TIMEDELTA: ${REPORT_TIMEDELTA}
       TIMEZONE: ${TIMEZONE}
     volumes:
-      - notification_bot:/notification_bot/tmp # Поменять путь :) (/usr/local/) /home/${USER}
+      - allure_telegram_bot:/allure_telegram_bot/tmp
     networks:
-      - net
+      - allure-bot
 
 networks:
-  net:
+  allure-bot:
     driver: bridge
 
 volumes:
   mongo_db:
-  notification_bot:
+  allure_telegram_bot-bot:
