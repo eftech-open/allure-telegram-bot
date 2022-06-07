@@ -43,4 +43,4 @@ networks:
 
 volumes:
   mongo_db:
-  allure_telegram_bot-bot:
+  allure_telegram_bot:

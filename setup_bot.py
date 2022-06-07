@@ -7,11 +7,11 @@ from click import command, echo, option, STRING, INT
 @option("--allure_project", prompt="Allure TestOps project ID", type=INT, help='Project ID')
 @option("--allure_user_token", prompt="Allure TestOps user token", type=STRING, help='User API-token')
 @option("--bot_token", prompt="Bot token", type=STRING, help='Issued by BotFather')
-@option("--mongo_host", prompt="Mongo host", default='127.0.0.1', type=STRING,
-        help='IP or https address, default \'127.0.0.1\'')
+@option("--mongo_host", prompt="Mongo host", default='mongo_db', type=STRING,
+        help='IP address or container name, default \'mongo_db\'')
 @option("--mongo_port", prompt="Mongo port", default=27017, type=INT, help='Database port, default \'27017\'')
-@option("--mongo_database", prompt="Mongo database", default='allure-bot', type=STRING,
-        help='Database port, default \'allure-bot\'')
+@option("--mongo_database", prompt="Mongo database", default='allure_bot', type=STRING,
+        help='Database name, default \'allure_bot\'')
 def generate_env_file(allure_project, allure_url, allure_user_token, bot_token, mongo_host, mongo_port,
                       mongo_database):
     """

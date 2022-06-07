@@ -44,7 +44,8 @@ def main() -> None:
             'trigger': CronTrigger.from_crontab(
                 expr=os.environ.get('CLEAR_DATE_TMP'),
                 timezone=os.environ.get('TIMEZONE')
-            )
+            ),
+            'max_instances': 2
         }
     )
 
