@@ -89,7 +89,7 @@ def perform_notify(context: CallbackContext) -> None:
             elif subscription == 'critical':
                 critical_subs.append(key)
 
-        if "Все тесты прошли успешно" not in critical_report["message"]:
+        if "All tests passed" not in critical_report["message"]:
             for chat_id in critical_subs:
                 try:
                     context.bot.send_photo(
@@ -105,7 +105,7 @@ def perform_notify(context: CallbackContext) -> None:
         else:
             logging.debug("The number of failed tests does not exceed a critical value")
 
-        if "Все тесты прошли успешно" not in full_report["message"]:
+        if "All tests passed" not in full_report["message"]:
             for chat_id in all_subs:
                 try:
                     context.bot.send_photo(

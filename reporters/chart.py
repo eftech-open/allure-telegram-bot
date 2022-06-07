@@ -100,7 +100,7 @@ class ChartReporter:
                         launch_defects.add(defect_url)
 
         if failed == 0 and broken == 0:
-            info_message = "All tests have passed"
+            info_message = "All tests passed"
         else:
             if launch_with_failed_tests != "":
                 info_message = info_message + "\nLaunches with FAILED status:\n" + launch_with_failed_tests
