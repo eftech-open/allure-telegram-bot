@@ -26,7 +26,7 @@ class ChartReporter:
     def _form_time_interval(self) -> str:
         time_from = form_timedelta(minutes=int(self._report_delta))
         return f"I found unsuccessful launch\(es\) in the period from " \
-               f"{time_from} по {form_nowdate()}".replace('-', '\-')
+               f"{time_from} to {form_nowdate()}".replace('-', '\-')
 
     def _create_chart(self, passed, broken, failed) -> str:
         statuses = self._form_status(passed, broken, failed)
