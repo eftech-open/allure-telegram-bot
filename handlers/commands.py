@@ -44,13 +44,13 @@ def notify_all(update: Update, context: CallbackContext) -> None:
     if not subscription:
         subscribe_all(context, chat_id)
         set_chat_info(update, context, chat_id)
-        text = 'You have already subscribed for all notifications!'
+        text = 'You have subscribed for all notifications!'
     elif subscription == 'critical':
         subscribe_all(context, chat_id)
         set_chat_info(update, context, chat_id)
-        text = f'You have changed subscriptions from critical > {report_critical}% to all!'
+        text = f'Done! You have changed subscriptions from critical > {report_critical}% to all!'
     elif subscription == 'all':
-        text = 'You have already subscribed for all notifications!'
+        text = 'Oops! You have already subscribed for all notifications!'
     else:
         text = 'Command execution error'
     update.message.reply_text(text)
@@ -116,7 +116,8 @@ def perform_notify(context: CallbackContext) -> None:
                     )
 
                     logging.debug(f"Message send to '{chat_id}' with 'all' subscription")
-                except Unauthorized:
+                except Unauthorized as error:
+                    logging.info(error.message)
                     unsubscribe(context, chat_id)
         else:
             logging.debug("All tests in launch are passed")

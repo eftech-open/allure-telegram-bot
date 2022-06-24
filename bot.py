@@ -45,7 +45,7 @@ def main() -> None:
                 expr=os.environ.get('CLEAR_DATE_TMP'),
                 timezone=os.environ.get('TIMEZONE')
             ),
-            'max_instances': 2
+            'max_instances': 3
         }
     )
 

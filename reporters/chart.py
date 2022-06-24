@@ -25,7 +25,8 @@ class ChartReporter:
 
     def _form_time_interval(self) -> str:
         time_from = form_timedelta(minutes=int(self._report_delta))
-        return f"I found unsuccessful launch in the period from {time_from} по {form_nowdate()}"
+        return f"I found unsuccessful launch\(es\) in the period from " \
+               f"{time_from} по {form_nowdate()}".replace('-', '\-')
 
     def _create_chart(self, passed, broken, failed) -> str:
         statuses = self._form_status(passed, broken, failed)
@@ -68,7 +69,10 @@ class ChartReporter:
     def _create_info_message(self, summary: dict, start_info_message: str, get_defects: bool = False) -> tuple:
         passed, failed, broken = 0, 0, 0
 
-        alarm_emoji = emoji.emojize(':rotating_light:', use_aliases=True)
+        alarm_emoji = emoji.emojize(':rotating_light:', language='alias')
+        warning_emoji = emoji.emojize(':warning:', language='alias')
+        mark_emoji = emoji.emojize(':cross_mark:', language='alias')
+
         info_message = f"{alarm_emoji} {start_info_message} {alarm_emoji}\n"
 
         launch_with_failed_tests = ""
@@ -76,7 +80,7 @@ class ChartReporter:
         launch_defects = set()
 
         for key, value in summary.items():
-            launch_url = f"\- [{value['name'].replace('.', ':')}]({{self._allure_url}}/launch/{key})\n"
+            launch_url = f"{mark_emoji} [{value['name'].replace('.', ':').replace('-', '')}]({self._allure_url}/launch/{key})\n"
             statistic = summary[key]['statistic']
 
             for status in statistic:
@@ -95,7 +99,7 @@ class ChartReporter:
                     for defect in defects:
                         defect_name = defect["name"]
                         defect_id = defect["id"]
-                        defect_url = f"\- [{defect_name}]" \
+                        defect_url = f"{warning_emoji} [{defect_name}]" \
                                      f"({self._allure_url}/project/{self._allure_project}/defects/{defect_id})\n"
                         launch_defects.add(defect_url)
 
