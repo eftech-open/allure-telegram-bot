@@ -2,6 +2,11 @@
 
 Telegram bot for Allure TestOps
 
+## Requirements
+
+* Python 3.8+
+* MongoDB 5.0+
+
 ## Features
 
 - Allure TestOps compatibility
@@ -10,17 +15,17 @@ Telegram bot for Allure TestOps
 - Pie chart report
 - Detailed logger
 
-### How it works
+## How it works
 
 1. User / group subscribes to launch information: all or critical
 2. The bot checks new launches in the program every 20 minutes
 3. The bot notifies the user / group of new launches
 
-### Supporter Commands
+## Supporter Commands
 
 * /help - shows list of commands
 * /notify_all - subscribes to all launches
-* /notify_critical - subscribes to critical launches
+* /notify_critical - subscribes to critical launches according percentage of failed tests
 * /remove_notify - unsubscribes from all launches
 
 ## Deployment
