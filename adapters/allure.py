@@ -3,13 +3,17 @@ import json
 import base64
 import logging
 from time import sleep
-from dates import form_timedelta, change_date_pattern, change_to_timestamp
+
+from dotenv import load_dotenv
+from tools.dates import form_timedelta, change_date_pattern, change_to_timestamp
 from tools.http_client import http_client
+
+load_dotenv()
 
 
 class AllureAdapter:
     """
-    Allure TestOps adapter
+    Allure TestOps API adapter
     """
 
     def __init__(self):
@@ -37,9 +41,7 @@ class AllureAdapter:
             "value": time_value
         }
 
-    """
-    Authorization methods
-    """
+    # Authorization methods
 
     def login_with_token(self) -> None:
         response_token = http_client(base_url=self._allure_url).post(
@@ -53,9 +55,7 @@ class AllureAdapter:
         self._token = response_token.json()['access_token']
         self._headers = {'Authorization': 'Bearer ' + self._token}
 
-    """
-    Get launch data methods
-    """
+    # Launch data methods
 
     def get_last_launches(self) -> list:
         launch_query = self._form_search_query(request_id='createdAfter', request_type='long')
@@ -101,9 +101,7 @@ class AllureAdapter:
                 statistic[key] = {'statistic': launch}
         return statistic
 
-    """
-    Parse launch data methods
-    """
+    # Parse launch data methods
 
     def parse_launches_with_id(self, data: list) -> tuple:
         launches = dict()
@@ -128,9 +126,7 @@ class AllureAdapter:
             results_modify[key] = test_case_results
         return results_modify
 
-    """
-    Методы анализа результатов запусков
-    """
+    # Launch analysis methods
 
     def analyze_results(self, allure_launches: dict) -> dict:
         launch_results = dict()
@@ -160,9 +156,7 @@ class AllureAdapter:
             launch_summary.pop(item, None)
         return launch_summary
 
-    """
-    Form report methods
-    """
+    # Form report methods
 
     def form_summary(self, compared_launches: dict, launch_results: dict, statistic: dict,
                      defects: dict) -> dict:
@@ -179,9 +173,7 @@ class AllureAdapter:
             summary[key]['defects'] = defects[key]['defects']
         return summary
 
-    """
-    Launch status methods
-    """
+    # Launch status methods
 
     def get_launch_status(self, launch_id: int) -> str:
         launch_info = http_client(base_url=self._allure_url).get(
@@ -211,3 +203,6 @@ class AllureAdapter:
                     retries -= 1
                     continue
         return statuses
+
+
+allure = AllureAdapter()

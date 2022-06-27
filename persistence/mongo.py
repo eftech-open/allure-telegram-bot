@@ -1,7 +1,14 @@
 import logging
+import os
+
 from collections import defaultdict
-from pymongo import MongoClient
 from telegram.ext import BasePersistence
+
+from dotenv import load_dotenv
+from pymongo import MongoClient
+
+
+load_dotenv()
 
 
 class MongoPersistence(BasePersistence):
@@ -82,3 +89,10 @@ class MongoPersistence(BasePersistence):
         for key, value in data.items():
             self.db["launch_data"].update_one({"launch_id": key}, {"$set": {"launch_id": key}}, upsert=True)
             logging.debug(f"'launch_id': {key} added to 'launch_data'")
+
+
+mongo_persistence = MongoPersistence(
+    host=os.environ.get('MONGO_HOST'),
+    port=os.environ.get('MONGO_PORT'),
+    database=os.environ.get('MONGO_DATABASE')
+)

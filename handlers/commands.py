@@ -3,21 +3,23 @@ import logging
 from telegram import Update, parsemode
 from telegram.error import Unauthorized
 from telegram.ext import CallbackContext
-from bot import reporter
 from handlers.utils import collect_launch_statistic, unsubscribe, subscribe_all, set_chat_info, subscribe_critical
+from reporters.chart import reporter
+
+report_critical = os.environ.get('REPORT_CRITICAL_PERCENT')
 
 
 def start(update: Update, context: CallbackContext) -> None:
     from_user = update.message.from_user.name
-    message = f"Hi, {from_user}!\n" \
-              f"Enter /help for commands list"
+    message = f"Hey, {from_user}!\n" \
+              f"Send /help for commands list"
     update.message.reply_text(message)
 
 
 def help_info(update: Update, context: CallbackContext) -> None:
-    message = "Enter /notify_all to activate notifications to all notification \n" \
-              "Enter /notify_critical to activate notifications for critical notifications\n" \
-              "Enter /remove_notify to deactivate all notifications\n"
+    message = "Send /notify_all to activate notifications to all notification \n" \
+              "Send /notify_critical to activate notifications for critical notifications\n" \
+              "Send /remove_notify to deactivate all notifications\n"
     update.message.reply_text(message)
 
 
@@ -31,7 +33,7 @@ def remove_notify(update: Update, context: CallbackContext) -> None:
     elif not subscription:
         text = 'You have not any active notifications'
     else:
-        text = 'Command error'
+        text = 'Command execution error'
     update.message.reply_text(text)
 
 
@@ -42,16 +44,15 @@ def notify_all(update: Update, context: CallbackContext) -> None:
     if not subscription:
         subscribe_all(context, chat_id)
         set_chat_info(update, context, chat_id)
-        text = 'Вы подписаны на уведомления по всем запускам!'
+        text = 'You have subscribed for all notifications!'
     elif subscription == 'critical':
         subscribe_all(context, chat_id)
         set_chat_info(update, context, chat_id)
-        text = f'Вы изменили подписку с частичной о запусках с кол-вом упавших тестов > ' \
-               f'{os.environ.get("REPORT_CRITICAL_PERCENT")}% на полную!'
+        text = f'Done! You have changed subscriptions from critical > {report_critical}% to all!'
     elif subscription == 'all':
-        text = 'Вы уже подписаны на уведомления по всем запускам!'
+        text = 'Oops! You have already subscribed for all notifications!'
     else:
-        text = 'Ошибка обработки команды'
+        text = 'Command execution error'
     update.message.reply_text(text)
 
 
@@ -62,18 +63,15 @@ def notify_critical(update: Update, context: CallbackContext) -> None:
     if not subscription:
         subscribe_critical(context, chat_id)
         set_chat_info(update, context, chat_id)
-        text = f'Вы подписаны на уведомления о запусках с кол-вом упавших тестов > ' \
-               f'{os.environ.get("REPORT_CRITICAL_PERCENT")}%!'
+        text = f'You have subscribed to \'critical\' with > {report_critical}%'
     elif subscription == 'all':
         subscribe_critical(context, chat_id)
         set_chat_info(update, context, chat_id)
-        text = f'Вы изменили подписку с полной на уведомления о запусках с кол-вом упавших тестов > ' \
-               f'{os.environ.get("REPORT_CRITICAL_PERCENT")}%!'
+        text = f'Subscription changed to \'critical\' with > {report_critical}%'
     elif subscription == 'critical':
-        text = f'Вы уже подписаны на уведомления о запусках с кол-вом упавших тестов > ' \
-               f'{os.environ.get("REPORT_CRITICAL_PERCENT")}%!'
+        text = f'You have already subscribed to \'critical\' with > {report_critical}%'
     else:
-        text = 'Ошибка обработки команды'
+        text = 'Command execution error'
     update.message.reply_text(text)
 
 
@@ -91,7 +89,7 @@ def perform_notify(context: CallbackContext) -> None:
             elif subscription == 'critical':
                 critical_subs.append(key)
 
-        if "Все тесты прошли успешно" not in critical_report["message"]:
+        if critical_report["status"] == "failure":
             for chat_id in critical_subs:
                 try:
                     context.bot.send_photo(
@@ -101,13 +99,13 @@ def perform_notify(context: CallbackContext) -> None:
                         parse_mode=parsemode.ParseMode.MARKDOWN_V2
                     )
 
-                    logging.debug(f"Сообщение отправлено в '{chat_id}' по подписке 'critical'")
+                    logging.debug(f"Message send to '{chat_id}' with 'critical' subscription")
                 except Unauthorized:
                     unsubscribe(context, chat_id)
         else:
-            logging.debug("Найденные запуски не содержат критическое кол-во упавших тестов")
+            logging.debug("The number of failed tests does not exceed a critical value")
 
-        if "Все тесты прошли успешно" not in full_report["message"]:
+        if full_report["status"] == "failure":
             for chat_id in all_subs:
                 try:
                     context.bot.send_photo(
@@ -117,10 +115,11 @@ def perform_notify(context: CallbackContext) -> None:
                         parse_mode=parsemode.ParseMode.MARKDOWN_V2
                     )
 
-                    logging.debug(f"Сообщение отправлено в '{chat_id}' по подписке 'all'")
-                except Unauthorized:
+                    logging.debug(f"Message send to '{chat_id}' with 'all' subscription")
+                except Unauthorized as error:
+                    logging.info(error.message)
                     unsubscribe(context, chat_id)
         else:
-            logging.debug("Найденные запуски не содержат упавших тестов")
+            logging.debug("All tests in launch are passed")
     else:
         logging.debug("New launches not found")

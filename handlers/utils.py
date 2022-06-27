@@ -1,13 +1,15 @@
 import os
 import logging
+
 from telegram import Update
 from telegram.ext import CallbackContext
 from typing import Optional
-from bot import mongo_persistence, allure
 
-"""
-Subscriptions
-"""
+from adapters.allure import allure
+from persistence.mongo import mongo_persistence
+
+
+# Subscriptions
 
 
 def subscribe_all(context: CallbackContext, chat_id) -> None:
@@ -35,9 +37,7 @@ def set_chat_info(update: Update, context: CallbackContext, chat_id) -> None:
         logging.info(f"Private '{chat_id}': username - {update.effective_chat.username}")
 
 
-"""
-Launches
-"""
+# Launches
 
 
 def collect_launch_statistic() -> Optional[dict]:
@@ -69,9 +69,7 @@ def collect_launch_statistic() -> Optional[dict]:
         return
 
 
-"""
-Cleanup
-"""
+# Persistence cleanup
 
 
 def clean_processed_launches(_) -> None:

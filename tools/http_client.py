@@ -3,7 +3,7 @@ import requests
 from urllib.parse import urlparse
 
 
-class HTTPMethods:
+class HTTPClient:
     """
     Http-клиент
     """
@@ -35,11 +35,11 @@ class HTTPMethods:
             retry_status_code_list = range(400, 505)
             if response.status_code != expected_code and response.status_code not in retry_status_code_list:
                 raise AssertionError(
-                    f"Ожидаемый статус-код [{expected_code}] не равен актуальному [{response.status_code}]")
+                    f"Expected status code [{expected_code}] not equals [{response.status_code}]")
             elif response.status_code in retry_status_code_list:
                 if _ == retries - 1:
                     raise AssertionError(
-                        f"Ожидаемый статус-код [{expected_code}] не равен актуальному [{response.status_code}]")
+                        f"Expected status code [{expected_code}] not equals [{response.status_code}]")
                 continue
             return response
 
@@ -56,4 +56,4 @@ class HTTPMethods:
         return self.__perform_request(method="delete", endpoint=endpoint, expected_code=expected_code, **kwargs)
 
 
-http_client = HTTPMethods
+http_client = HTTPClient

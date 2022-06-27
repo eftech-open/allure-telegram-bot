@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+
+  mongo:
+    image: mongo:5.0
+    container_name: allure_bot_db
+    restart: always
+    ports:
+      - ${MONGO_PORT}:${MONGO_PORT}
+    volumes:
+      - allure_bot_db:/data/db
+    networks:
+      - allure_bot
+
+  allure-telegram-bot:
+    image: eftechopen/allure-telegram-bot:1.0.0
+    container_name: allure_bot
+    restart: always
+    environment:
+      ALLURE_PROJECT: ${ALLURE_PROJECT}
+      ALLURE_URL: ${ALLURE_URL}
+      ALLURE_USER_TOKEN: ${ALLURE_USER_TOKEN}
+      BOT_TOKEN: ${BOT_TOKEN}
+      CLEAR_DATE_TMP: ${CLEAR_DATE_TMP}
+      CLEAR_DB_LAUNCHES: ${CLEAR_DB_LAUNCHES}
+      MONGO_DATABASE: ${MONGO_DATABASE}
+      MONGO_HOST: ${MONGO_HOST}
+      MONGO_PORT: ${MONGO_PORT}
+      REPORT_CHART_PATH: ${REPORT_CHART_PATH}
+      REPORT_CRITICAL_PERCENT: ${REPORT_CRITICAL_PERCENT}
+      REPORT_INTERVAL: ${REPORT_INTERVAL}
+      REPORT_TIMEDELTA: ${REPORT_TIMEDELTA}
+      TIMEZONE: ${TIMEZONE}
+    volumes:
+      - allure_bot:/allure_telegram_bot/tmp
+    networks:
+      - allure_bot
+
+networks:
+  allure_bot:
+    driver: bridge
+
+volumes:
+  allure_bot:
+  allure_bot_db:
