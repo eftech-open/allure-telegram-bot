@@ -70,7 +70,7 @@ Deployment is available both through the launch of the repository and through th
     via docker-compose:
     
     ```bash
-    docker-compose -f docker-compose.yml up
+    docker-compose -f docker-compose.yml up -d
     ```
 
 ### Variables
@@ -87,7 +87,7 @@ The following variables are available for launching and configuring the bot
 | MONGO_PORT              | MongoDB port                                                | `27017`         |
 | MONGO_DATABASE          | MongoDB database                                            | `allure_bot`    |
 | REPORT_INTERVAL         | Frequency of checking for new launches (minutes)            | `20`            |
-| REPORT_TIMEDELTA        | Search for new launches in the last minutes                 | `200`           |
+| REPORT_TIMEDELTA        | Search for new launches in interval (minutes)               | `200`           |
 | REPORT_CHART_PATH       | Temporary image storage directory                           | `./tmp/`        |
 | REPORT_CRITICAL_PERCENT | Percentage of failed tests in run for critical notification | `50`            |
 | TIMEZONE                | Time zone for cron jobs                                     | `UTC`           |

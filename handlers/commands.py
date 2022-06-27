@@ -12,14 +12,14 @@ report_critical = os.environ.get('REPORT_CRITICAL_PERCENT')
 def start(update: Update, context: CallbackContext) -> None:
     from_user = update.message.from_user.name
     message = f"Hey, {from_user}!\n" \
-              f"Enter /help for commands list"
+              f"Send /help for commands list"
     update.message.reply_text(message)
 
 
 def help_info(update: Update, context: CallbackContext) -> None:
-    message = "Enter /notify_all to activate notifications to all notification \n" \
-              "Enter /notify_critical to activate notifications for critical notifications\n" \
-              "Enter /remove_notify to deactivate all notifications\n"
+    message = "Send /notify_all to activate notifications to all notification \n" \
+              "Send /notify_critical to activate notifications for critical notifications\n" \
+              "Send /remove_notify to deactivate all notifications\n"
     update.message.reply_text(message)
 
 
@@ -89,7 +89,7 @@ def perform_notify(context: CallbackContext) -> None:
             elif subscription == 'critical':
                 critical_subs.append(key)
 
-        if "All tests passed" not in critical_report["message"]:
+        if critical_report["status"] == "failure":
             for chat_id in critical_subs:
                 try:
                     context.bot.send_photo(
@@ -105,7 +105,7 @@ def perform_notify(context: CallbackContext) -> None:
         else:
             logging.debug("The number of failed tests does not exceed a critical value")
 
-        if "All tests passed" not in full_report["message"]:
+        if full_report["status"] == "failure":
             for chat_id in all_subs:
                 try:
                     context.bot.send_photo(

@@ -4,18 +4,18 @@ services:
 
   mongo:
     image: mongo:5.0
-    container_name: mongo_db
+    container_name: allure_bot_db
     restart: always
     ports:
       - ${MONGO_PORT}:${MONGO_PORT}
     volumes:
-      - mongo_db:/data/db
+      - allure_bot_db:/data/db
     networks:
-      - allure-bot
+      - allure_bot
 
   allure-telegram-bot:
-    image: eftechopen/allure-telegram-bot:feat-reporter
-    container_name: telegram-bot
+    image: eftechopen/allure-telegram-bot:1.0.0
+    container_name: allure_bot
     restart: always
     environment:
       ALLURE_PROJECT: ${ALLURE_PROJECT}
@@ -33,14 +33,14 @@ services:
       REPORT_TIMEDELTA: ${REPORT_TIMEDELTA}
       TIMEZONE: ${TIMEZONE}
     volumes:
-      - allure_telegram_bot:/allure_telegram_bot/tmp
+      - allure_bot:/allure_telegram_bot/tmp
     networks:
-      - allure-bot
+      - allure_bot
 
 networks:
-  allure-bot:
+  allure_bot:
     driver: bridge
 
 volumes:
-  mongo_db:
-  allure_telegram_bot:
+  allure_bot:
+  allure_bot_db:

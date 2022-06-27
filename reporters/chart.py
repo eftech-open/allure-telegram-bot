@@ -142,7 +142,11 @@ class ChartReporter:
             get_defects=True
         )
         file_path = self._create_chart(passed, broken, failed)
-        return {'file': file_path, 'message': info_message}
+        if "All tests passed" in info_message:
+            status = 'success'
+        else:
+            status = 'failure'
+        return {'file': file_path, 'message': info_message, 'status': status}
 
     def generate_critical_report(self, summary: dict) -> dict:
         filtered_summary = self._count_statistic(summary)
@@ -153,7 +157,11 @@ class ChartReporter:
             get_defects=True
         )
         file_path = self._create_chart(passed, broken, failed)
-        return {'file': file_path, 'message': info_message}
+        if "All tests passed" in info_message:
+            status = 'success'
+        else:
+            status = 'failure'
+        return {'file': file_path, 'message': info_message, 'status': status}
 
 
 reporter = ChartReporter()
