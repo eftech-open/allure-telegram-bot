@@ -20,6 +20,7 @@ Telegram bot for Allure TestOps
 1. User / group subscribes to launch information: all or critical
 2. The bot checks new launches in the program every 20 minutes
 3. The bot notifies the user / group of new launches
+4. The bot stores processed launches in the database
 
 ## Supporter Commands
 
@@ -43,11 +44,11 @@ Deployment is available both through the launch of the repository and through th
    via docker image:
 
     ```bash
-    docker pull eftech-open/allure-telegram-bot:master
+    docker pull eftech-open/allure-telegram-bot:1.0.0
     ```
 
 2. Generate .env-file with required variables
-
+   
     ```bash
     python3 setup_bot.py
     ```
