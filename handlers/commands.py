@@ -24,6 +24,9 @@ def help_info(update: Update, context: CallbackContext) -> None:
 
 
 def remove_notify(update: Update, context: CallbackContext) -> None:
+    """
+    Disabling notifications
+    """
     chat_id = update.message.chat_id
     subscription = context.dispatcher.chat_data[chat_id]["subscription"]
 
@@ -38,6 +41,9 @@ def remove_notify(update: Update, context: CallbackContext) -> None:
 
 
 def notify_all(update: Update, context: CallbackContext) -> None:
+    """
+    Subscribe to all launch notification
+    """
     chat_id = update.message.chat_id
     subscription = context.dispatcher.chat_data[chat_id].get("subscription")
 
@@ -57,6 +63,9 @@ def notify_all(update: Update, context: CallbackContext) -> None:
 
 
 def notify_critical(update: Update, context: CallbackContext) -> None:
+    """
+    Subscribe to critical launch notification
+    """
     chat_id = update.message.chat_id
     subscription = context.dispatcher.chat_data[chat_id].get("subscription")
 
@@ -76,10 +85,12 @@ def notify_critical(update: Update, context: CallbackContext) -> None:
 
 
 def perform_notify(context: CallbackContext) -> None:
+    """
+    Sending a message to a bot
+    :param context: context
+    """
     summary = collect_launch_statistic()
     if summary != {}:
-        full_report = reporter.generate_full_report(summary)
-        critical_report = reporter.generate_critical_report(summary)
         all_subs = []
         critical_subs = []
         for key in context.dispatcher.chat_data.keys():
@@ -89,37 +100,44 @@ def perform_notify(context: CallbackContext) -> None:
             elif subscription == 'critical':
                 critical_subs.append(key)
 
-        if critical_report["status"] == "failure":
-            for chat_id in critical_subs:
-                try:
-                    context.bot.send_photo(
-                        chat_id=chat_id,
-                        photo=open(critical_report['file'], 'rb'),
-                        caption=critical_report["message"],
-                        parse_mode=parsemode.ParseMode.MARKDOWN_V2
-                    )
+        report = reporter.generate_report(summary)
 
-                    logging.debug(f"Message send to '{chat_id}' with 'critical' subscription")
-                except Unauthorized:
-                    unsubscribe(context, chat_id)
+        if (report["status"] == "failure") and (len(critical_subs) > 0):
+            _send_report(report_file=report['file_critical'], report_message=report['message_critical'], context=context,
+                         subs=critical_subs, subscription=subscription)
         else:
             logging.debug("The number of failed tests does not exceed a critical value")
 
-        if full_report["status"] == "failure":
-            for chat_id in all_subs:
-                try:
-                    context.bot.send_photo(
-                        chat_id=chat_id,
-                        photo=open(full_report['file'], 'rb'),
-                        caption=full_report["message"],
-                        parse_mode=parsemode.ParseMode.MARKDOWN_V2
-                    )
-
-                    logging.debug(f"Message send to '{chat_id}' with 'all' subscription")
-                except Unauthorized as error:
-                    logging.info(error.message)
-                    unsubscribe(context, chat_id)
+        if (report["status"] == "failure") and (len(all_subs) > 0):
+            _send_report(report_file=report['file_all'], report_message=report['message_all'], context=context,
+                         subs=all_subs, subscription=subscription)
         else:
             logging.debug("All tests in launch are passed")
+
     else:
         logging.debug("New launches not found")
+
+
+def _send_report(report_file: str, report_message: str, context: CallbackContext, subs: list,
+                 subscription: str) -> None:
+    """
+    Send report
+    :param report_file: the path to the generated launch picture
+    :param report_message: message text
+    :param context: context
+    :param subs: list of subscribers
+    :param subscription: type subscription
+    """
+    for chat_id in subs:
+        try:
+            context.bot.send_photo(
+                chat_id=chat_id,
+                photo=open(report_file, 'rb'),
+                caption=report_message,
+                parse_mode=parsemode.ParseMode.MARKDOWN_V2
+            )
+        except Unauthorized as error:
+            logging.info(error.message)
+            unsubscribe(context, chat_id)
+
+        logging.debug(f"Message send to '{chat_id}' with '{subscription}' subscription")

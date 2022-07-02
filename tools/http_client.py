@@ -1,6 +1,7 @@
 import logging
 import requests
 from urllib.parse import urlparse
+from exceptions import HttpResponseErrors
 
 
 class HTTPClient:
@@ -34,12 +35,10 @@ class HTTPClient:
 
             retry_status_code_list = range(400, 505)
             if response.status_code != expected_code and response.status_code not in retry_status_code_list:
-                raise AssertionError(
-                    f"Expected status code [{expected_code}] not equals [{response.status_code}]")
+                raise HttpResponseErrors(expected_code, response.status_code)
             elif response.status_code in retry_status_code_list:
                 if _ == retries - 1:
-                    raise AssertionError(
-                        f"Expected status code [{expected_code}] not equals [{response.status_code}]")
+                    raise HttpResponseErrors(expected_code, response.status_code)
                 continue
             return response
 
