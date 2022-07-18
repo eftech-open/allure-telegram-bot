@@ -91,7 +91,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "emoji"
-version = "1.7.0"
+version = "2.0.0"
 description = "Emoji for Python"
 category = "main"
 optional = false
@@ -423,7 +423,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.10"
-content-hash = "bfcfef58315f96f283930acea694682edeca6796f913c5dbc60f53424bd0a273"
+content-hash = "0fa593c6d9a39e670646c5d3f77c080f4f1c795bb5176c8430f25458559da477"
 
 [metadata.files]
 apscheduler = [
@@ -473,7 +473,7 @@ cycler = [
     {file = "cycler-0.11.0.tar.gz", hash = "sha256:9c87405839a19696e837b3b818fed3f5f69f16f1eec1a1ad77e043dcea9c772f"},
 ]
 emoji = [
-    {file = "emoji-1.7.0.tar.gz", hash = "sha256:65c54533ea3c78f30d0729288998715f418d7467de89ec258a31c0ce8660a1d1"},
+    {file = "emoji-2.0.0.tar.gz", hash = "sha256:297fac7ec9e86f7b602792c28eb6f04819ba67ab88a34c56afcde52243a9a105"},
 ]
 flake8 = [
     {file = "flake8-4.0.1-py2.py3-none-any.whl", hash = "sha256:479b1304f72536a55948cb40a32dce8bb0ffe3501e26eaf292c7e60eb5e0428d"},
