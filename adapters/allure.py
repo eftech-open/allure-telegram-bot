@@ -3,7 +3,6 @@ import json
 import base64
 import logging
 from time import sleep
-
 from dotenv import load_dotenv
 from tools.dates import form_timedelta, change_date_pattern, change_to_timestamp
 from tools.http_client import http_client
@@ -26,11 +25,23 @@ class AllureAdapter:
 
     @staticmethod
     def _encode_request(request: dict) -> str:
+        """
+        Encode request
+        :param request: launch query request
+        :return: return the encoded launch query request
+        """
         format_list = [request.copy()]
         decode = json.dumps(format_list)
         return base64.b64encode(decode.encode()).decode()
 
     def _form_search_query(self, request_id: str, request_type: str, time_from: str = None) -> dict:
+        """
+        Form search query
+        :param request_id: request id
+        :param request_type: type request
+        :param time_from: time delta
+        :return: return the incoming data dictionary along with the formatted date
+        """
         if not time_from:
             time_from = form_timedelta(minutes=int(self._timedelta), pattern="%d/%m/%Y %H:%M:%S")
         to_date = change_date_pattern(date_string=time_from, pattern="%d/%m/%Y %H:%M:%S")
@@ -44,6 +55,7 @@ class AllureAdapter:
     # Authorization methods
 
     def login_with_token(self) -> None:
+        """Login in allure with token"""
         response_token = http_client(base_url=self._allure_url).post(
             endpoint='/api/uaa/oauth/token',
             data={
@@ -58,6 +70,10 @@ class AllureAdapter:
     # Launch data methods
 
     def get_last_launches(self) -> list:
+        """
+        Get last launches
+        :return: return the list of last launches
+        """
         launch_query = self._form_search_query(request_id='createdAfter', request_type='long')
         search_list = self._encode_request(launch_query)
         last_launches = http_client(base_url=self._allure_url).get(
@@ -74,6 +90,11 @@ class AllureAdapter:
         return json.loads(last_launches.text)['content']
 
     def get_launch_defects(self, allure_launches: dict) -> dict:
+        """
+        Get launch defects
+        :param allure_launches: allure launches
+        :return: return launch dict with defect
+        """
         launch_results = dict()
         for key, value in allure_launches.items():
             if value['status'] == "finished":
@@ -90,6 +111,11 @@ class AllureAdapter:
         return launch_results
 
     def get_launch_statistic(self, allure_launches: dict) -> dict:
+        """
+        Get launch statistic
+        :param allure_launches: allure launches
+        :return: return statistic dict
+        """
         statistic = dict()
         for key, value in allure_launches.items():
             if value['status'] == "finished":
@@ -103,7 +129,13 @@ class AllureAdapter:
 
     # Parse launch data methods
 
-    def parse_launches_with_id(self, data: list) -> tuple:
+    @staticmethod
+    def parse_launches_with_id(data: list) -> tuple:
+        """
+        Parse launches with id
+        :param data: launches list
+        :return: return launches and id launch
+        """
         launches = dict()
         for item in data:
             launches[item.get("id")] = dict()
@@ -112,7 +144,13 @@ class AllureAdapter:
         id_launch = list({int(item["id"]) for item in data})
         return launches, id_launch
 
-    def parse_launch_results(self, launch_results: dict) -> dict:
+    @staticmethod
+    def parse_launch_results(launch_results: dict) -> dict:
+        """
+        Parse launch results
+        :param launch_results: launch dict
+        :return: return the dictionary with basic data
+        """
         results_modify = dict()
         for key, value in launch_results.items():
             test_case_results = []
@@ -129,6 +167,11 @@ class AllureAdapter:
     # Launch analysis methods
 
     def analyze_results(self, allure_launches: dict) -> dict:
+        """
+        Analyze launch results
+        :param allure_launches: launches dict
+        :return: return the sorted dictionary with runs in 'finish' status
+        """
         launch_results = dict()
         for key, value in allure_launches.items():
             if value['status'] == "finished":
@@ -158,8 +201,17 @@ class AllureAdapter:
 
     # Form report methods
 
-    def form_summary(self, compared_launches: dict, launch_results: dict, statistic: dict,
+    @staticmethod
+    def form_summary(compared_launches: dict, launch_results: dict, statistic: dict,
                      defects: dict) -> dict:
+        """
+        Form summary report
+        :param compared_launches: launch compared
+        :param launch_results: launch results
+        :param statistic: launch statistic
+        :param defects: launch defects
+        :return: return the united dict
+        """
         summary = dict()
         for key, value in launch_results.items():
             summary[key] = dict()
@@ -176,20 +228,25 @@ class AllureAdapter:
     # Launch status methods
 
     def get_launch_status(self, launch_id: int) -> str:
+        """
+        Get launch status
+        :param launch_id: launch id
+        :return: launch status
+        """
         launch_info = http_client(base_url=self._allure_url).get(
             headers=self._headers,
             endpoint=f'/api/rs/launch/{launch_id}/job'
         )
         return json.loads(launch_info.text)[0].get('stage')
 
-    def get_launch_error(self, launch_id: int) -> str:
-        launch_info = http_client(base_url=self._allure_url).get(
-            headers=self._headers,
-            endpoint=f'/api/rs/launch/{launch_id}/job'
-        )
-        return json.loads(launch_info.text)[0].get('errorMessage')
-
     def wait_launch_status(self, launch_id: list, retries: int = 50, interval: int = 10) -> dict:
+        """
+        Wait launch status
+        :param launch_id: id launch list
+        :param retries: number of reruns
+        :param interval: number of interval
+        :return: return launch status dict
+        """
         statuses = dict()
         for launch in launch_id:
             while retries > 0:
