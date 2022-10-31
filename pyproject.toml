@@ -6,7 +6,7 @@ authors = ["Eftech Team"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.10"
-emoji = "^1.7.0"
+emoji = "^2.2.0"
 matplotlib = "^3.5.2"
 pytz = "^2022.1"
 pymongo = "^4.1.1"
