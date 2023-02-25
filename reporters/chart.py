@@ -29,6 +29,13 @@ class ChartReporter:
                f"{time_from} to {form_nowdate()}".replace('-', '\-')
 
     def _create_chart(self, passed, broken, failed) -> str:
+        """
+        Create chart
+        :param passed: passed test
+        :param broken: broken test
+        :param failed: failed test
+        :return: return the file path
+        """
         statuses = self._form_status(passed, broken, failed)
         labels, sizes, colors = list(), list(), list()
         for key, value in statuses.items():
@@ -67,6 +74,13 @@ class ChartReporter:
         return file_path
 
     def _create_info_message(self, summary: dict, start_info_message: str, get_defects: bool = False) -> tuple:
+        """
+        Creation of an information message
+        :param summary: launch data
+        :param start_info_message: start info message
+        :param get_defects: get information about defect in test
+        :return: return number of tests by statuses and the information message
+        """
         passed, failed, broken = 0, 0, 0
 
         alarm_emoji = emoji.emojize(':rotating_light:', language='alias')
@@ -119,9 +133,16 @@ class ChartReporter:
         return passed, failed, broken, info_message
 
     def _count_statistic(self, summary: dict) -> dict:
+        """
+        Count statistic
+        :param summary: launch data
+        :return: filtered resume by status
+        """
         filtered_summary = dict()
         for key, value in summary.items():
             statistic = summary[key]['statistic']
+            if len(statistic) == 0:
+                continue
             passed, failed, broken = 0, 0, 0
             for status in statistic:
                 if status['status'] == 'passed':
@@ -134,34 +155,41 @@ class ChartReporter:
                 filtered_summary[key] = value
         return filtered_summary
 
-    def generate_full_report(self, summary: dict) -> dict:
+    def generate_report(self, summary: dict) -> dict:
+        """
+        Report generation
+        :param summary: launch data
+        :return: return data to create a report of type 'all' and 'critical'
+        """
         message = self._form_time_interval()
+        info_message_all, file_path_all = self._generate_report_data(summary, message)
+
+        summary_critical = self._count_statistic(summary)
+        message_critical = f"{self._form_time_interval()} with critical {self._report_critical}%"
+        info_message_critical, file_path_critical = self._generate_report_data(summary_critical, message_critical)
+
+        if "All tests passed" in info_message_all:
+            status = 'success'
+        else:
+            status = 'failure'
+
+        return {'file_critical': file_path_critical, 'message_critical': info_message_critical,
+                'file_all': file_path_all, 'message_all': info_message_all, 'status': status}
+
+    def _generate_report_data(self, summary: dict, message: str) -> tuple:
+        """
+        Report data generation
+        :param summary: launch data
+        :param message: message text
+        :return: return the information message and file path
+        """
         passed, failed, broken, info_message = self._create_info_message(
             summary=summary,
             start_info_message=message,
             get_defects=True
         )
         file_path = self._create_chart(passed, broken, failed)
-        if "All tests passed" in info_message:
-            status = 'success'
-        else:
-            status = 'failure'
-        return {'file': file_path, 'message': info_message, 'status': status}
-
-    def generate_critical_report(self, summary: dict) -> dict:
-        filtered_summary = self._count_statistic(summary)
-        message = f"{self._form_time_interval()} with critical {self._report_critical}%"
-        passed, failed, broken, info_message = self._create_info_message(
-            summary=filtered_summary,
-            start_info_message=message,
-            get_defects=True
-        )
-        file_path = self._create_chart(passed, broken, failed)
-        if "All tests passed" in info_message:
-            status = 'success'
-        else:
-            status = 'failure'
-        return {'file': file_path, 'message': info_message, 'status': status}
+        return info_message, file_path
 
 
 reporter = ChartReporter()
